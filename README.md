@@ -1,2 +1,3 @@
-# reactive-stack-js-meteor-react
-reactive-stack-js with meteorjs &amp; reactjs
+## ReactiveStack with meteor and react
+
+See [reactive-stack](https://github.com/cope/reactive-stack) for more info.
