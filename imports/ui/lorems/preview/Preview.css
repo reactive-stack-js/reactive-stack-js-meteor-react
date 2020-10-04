@@ -1,0 +1,21 @@
+#lorems-preview-component {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 25px fit-content(0) auto;
+	grid-template-areas: "edit" "preview" "grid";
+	padding: 5px;
+}
+
+#lorems-preview-edit {
+	grid-area: edit;
+	display: flex;
+	justify-content: flex-end;
+}
+
+#lorems-preview-content {
+	grid-area: preview;
+}
+
+#lorems-preview-grid {
+	grid-area: grid;
+}
