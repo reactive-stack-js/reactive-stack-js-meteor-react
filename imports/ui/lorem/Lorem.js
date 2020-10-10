@@ -8,7 +8,6 @@ import moment from "moment";
 import jsonDiff from "json-diff";
 
 import './Lorem.css';
-import {Lorems} from '../../api/lorems.js';
 import {Drafts} from "../../api/drafts";
 
 let initialLoaded = false;

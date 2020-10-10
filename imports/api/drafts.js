@@ -2,7 +2,6 @@ import {Meteor} from 'meteor/meteor';
 import {Mongo} from 'meteor/mongo';
 import {check} from 'meteor/check';
 import _ from "lodash";
-import {Lorems} from "./lorems";
 
 export const Drafts = new Mongo.Collection('drafts');
 
