@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 import _ from "lodash";
 import moment from "moment";
 
-import './Preview.css';
+import "./Preview.css";
 import PreviewVersions from "./PreviewVersions.js";
 
 class Preview extends Component {
@@ -23,7 +23,7 @@ class Preview extends Component {
 	render() {
 		let selected = this.props.selected;
 		if (!selected) {
-			return ('');
+			return ("");
 		}
 		return (
 			<div id="lorems-preview-component">
@@ -37,11 +37,11 @@ class Preview extends Component {
 					<p><label className="preview-label">Email:</label> {selected.email}</p>
 					<p><label className="preview-label">Rating:</label> {selected.rating}</p>
 					<p><label className="preview-label">Spieces:</label> {selected.species}</p>
-					<p><label className="preview-label">Created&nbsp;At:</label> {moment(selected.createdAt).format('YYYY/MM/DD HH:mm:ss')}</p>
+					<p><label className="preview-label">Created&nbsp;At:</label> {moment(selected.createdAt).format("YYYY/MM/DD HH:mm:ss")}</p>
 					<p><label className="preview-label">Description:</label><br/><br/>{selected.description}</p>
 				</div>
 				<div id="lorems-preview-grid">
-					<PreviewVersions selected={this.props.selected} selectedVersions={_.orderBy(this.props.selectedVersions, ['iteration'], ['desc'])} onSelectVersion={this.onSelectVersion}/>
+					<PreviewVersions selected={this.props.selected} selectedVersions={_.orderBy(this.props.selectedVersions, ["iteration"], ["desc"])} onSelectVersion={this.onSelectVersion}/>
 				</div>
 			</div>
 		);

@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 import _ from "lodash";
 
 export default function Menu() {
 
-	let pathname = _.replace(window.location.pathname, '/', '');
+	let pathname = _.replace(window.location.pathname, "/", "");
 
 	if (_.isEmpty(pathname)) {
 		return (

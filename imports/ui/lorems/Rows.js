@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 import moment from "moment";
 import _ from "lodash";
 
@@ -20,7 +20,7 @@ class Rows extends Component {
 
 		return filteredLorems.map((lorem) => {
 			let selected = this.props.selected;
-			let rowClass = selected && lorem.itemId === selected.itemId ? 'active' : '';
+			let rowClass = selected && lorem.itemId === selected.itemId ? "active" : "";
 
 			return (
 				<tr key={Math.random()} className={rowClass} onClick={() => this.selectRow(lorem)}>
@@ -33,11 +33,11 @@ class Rows extends Component {
 					<td>{lorem.species}</td>
 					<td>
 						{_.truncate(lorem.description, {
-							'length': 75,
-							'separator': ' '
+							"length": 75,
+							"separator": " "
 						})}
 					</td>
-					<td>{moment(lorem.createdAt).format('YYYY/MM/DD HH:mm:ss')}</td>
+					<td>{moment(lorem.createdAt).format("YYYY/MM/DD HH:mm:ss")}</td>
 				</tr>
 			);
 		});

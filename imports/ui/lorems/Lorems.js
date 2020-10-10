@@ -1,20 +1,20 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 
-import {Meteor} from 'meteor/meteor';
-import {ReactiveVar} from 'meteor/reactive-var';
-import {withTracker} from 'meteor/react-meteor-data';
+import {Meteor} from "meteor/meteor";
+import {ReactiveVar} from "meteor/reactive-var";
+import {withTracker} from "meteor/react-meteor-data";
 
 import _ from "lodash";
 
-import {Lorems} from '../../api/lorems.js';
+import {Lorems} from "../../api/lorems.js";
 
-import './Lorems.css';
-import Rows from './Rows.js';
-import Preview from './preview/Preview.js';
+import "./Lorems.css";
+import Rows from "./Rows.js";
+import Preview from "./preview/Preview.js";
 
 const MIN_PAGE_SIZE = 5;
 const MAX_PAGE_SIZE = 25;
-const COLUMNS = ['iteration', 'firstname', 'lastname', 'email', 'rating', 'description'];
+const COLUMNS = ["iteration", "firstname", "lastname", "email", "rating", "description"];
 
 const filter = new ReactiveVar({isLatest: true});
 const sort = new ReactiveVar({createdAt: -1});
@@ -30,7 +30,7 @@ class LoremsComponent extends Component {
 			page: 1,
 			pageSize: 10,
 			pageCount: 0,
-			query: '',
+			query: "",
 			selected: null,
 			selectedVersions: []
 		};
@@ -78,7 +78,7 @@ class LoremsComponent extends Component {
 	}
 
 	async resetQuery() {
-		await this.setState({query: ''});
+		await this.setState({query: ""});
 		await filter.set({isLatest: true});
 		this.refreshPage();
 	}
@@ -97,18 +97,18 @@ class LoremsComponent extends Component {
 	}
 
 	async toggleSorting(label) {
-		if (label === 'firstname') {
-			await this._toggleSortingHelper('firstname');
-			await this._toggleSortingHelper('lastname');
+		if (label === "firstname") {
+			await this._toggleSortingHelper("firstname");
+			await this._toggleSortingHelper("lastname");
 		} else {
 			await this._toggleSortingHelper(label);
 		}
 
 		let sorting = sort.get();
-		if (sorting['createdAt']) {
-			let createdAt = sorting['createdAt'];
-			delete sorting['createdAt'];
-			sorting['createdAt'] = createdAt;
+		if (sorting["createdAt"]) {
+			let createdAt = sorting["createdAt"];
+			delete sorting["createdAt"];
+			sorting["createdAt"] = createdAt;
 		}
 		sorting = _.pickBy(sorting, _.identity);
 		await sort.set(sorting);
@@ -146,9 +146,9 @@ class LoremsComponent extends Component {
 	}
 
 	async editLorem(lorem) {
-		Meteor.call('lorem.createDraft', lorem._id._str, (error, result) => {
+		Meteor.call("lorem.createDraft", lorem._id._str, (error, result) => {
 			if (error) return console.error(error);
-			window.location.href = '/lorem/' + result;
+			window.location.href = "/lorem/" + result;
 		});
 	}
 
@@ -166,7 +166,7 @@ class LoremsComponent extends Component {
 		await this.setState({selected});
 		await this.setState({selectedVersions: []});
 
-		Meteor.call('lorems.iterations', selected.itemId, (error, result) => {
+		Meteor.call("lorems.iterations", selected.itemId, (error, result) => {
 			this.setState({selectedVersions: result});
 		});
 	}
@@ -186,11 +186,11 @@ class LoremsComponent extends Component {
 		if (sorting) {
 			let sortingLabel = _.get(sorting, label, false);
 			if (sortingLabel) {
-				if (sortingLabel < 0) return 'fa fa-long-arrow-down';
-				if (sortingLabel > 0) return 'fa fa-long-arrow-up';
+				if (sortingLabel < 0) return "fa fa-long-arrow-down";
+				if (sortingLabel > 0) return "fa fa-long-arrow-up";
 			}
 		}
-		return '';
+		return "";
 	}
 
 	render() {
@@ -230,29 +230,29 @@ class LoremsComponent extends Component {
 						<thead>
 						<tr>
 							<th align="left">#</th>
-							<th align="left" onClick={() => this.toggleSorting('iteration')} className="nowrap">
-								V. <i className={this.getIcon('iteration')}/>
+							<th align="left" onClick={() => this.toggleSorting("iteration")} className="nowrap">
+								V. <i className={this.getIcon("iteration")}/>
 							</th>
-							<th align="left" onClick={() => this.toggleSorting('firstname')} className="nowrap">
-								Name <i className={this.getIcon('firstname')}/>
+							<th align="left" onClick={() => this.toggleSorting("firstname")} className="nowrap">
+								Name <i className={this.getIcon("firstname")}/>
 							</th>
-							<th align="left" onClick={() => this.toggleSorting('username')} className="nowrap">
-								Username <i className={this.getIcon('username')}/>
+							<th align="left" onClick={() => this.toggleSorting("username")} className="nowrap">
+								Username <i className={this.getIcon("username")}/>
 							</th>
-							<th align="left" onClick={() => this.toggleSorting('email')} className="nowrap">
-								Email <i className={this.getIcon('email')}/>
+							<th align="left" onClick={() => this.toggleSorting("email")} className="nowrap">
+								Email <i className={this.getIcon("email")}/>
 							</th>
-							<th align="left" onClick={() => this.toggleSorting('rating')} className="nowrap">
-								Rating <i className={this.getIcon('rating')}/>
+							<th align="left" onClick={() => this.toggleSorting("rating")} className="nowrap">
+								Rating <i className={this.getIcon("rating")}/>
 							</th>
-							<th align="left" onClick={() => this.toggleSorting('species')} className="nowrap">
-								Species <i className={this.getIcon('species')}/>
+							<th align="left" onClick={() => this.toggleSorting("species")} className="nowrap">
+								Species <i className={this.getIcon("species")}/>
 							</th>
-							<th align="left" onClick={() => this.toggleSorting('description')} className="nowrap">
-								Description <i className={this.getIcon('description')}/>
+							<th align="left" onClick={() => this.toggleSorting("description")} className="nowrap">
+								Description <i className={this.getIcon("description")}/>
 							</th>
-							<th align="left" onClick={() => this.toggleSorting('createdAt')} className="nowrap">
-								Created At <i className={this.getIcon('createdAt')}/>
+							<th align="left" onClick={() => this.toggleSorting("createdAt")} className="nowrap">
+								Created At <i className={this.getIcon("createdAt")}/>
 							</th>
 						</tr>
 						</thead>
@@ -278,7 +278,7 @@ class LoremsComponent extends Component {
 }
 
 export default withTracker((props) => {
-	Meteor.subscribe('lorems', filter.get());
+	Meteor.subscribe("lorems", filter.get());
 
 	return {
 		lorems: Lorems.find(

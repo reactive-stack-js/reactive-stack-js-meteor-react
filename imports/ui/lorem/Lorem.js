@@ -190,7 +190,7 @@ class LoremComponent extends Component {
 						{
 							updatedAt
 								? <span><br/>Last update at <b>{moment(updatedAt).format("YYYY/MM/DD HH:mm:ss")}</b>.</span>
-								: ''
+								: ""
 						}
 					</p>
 				</div>

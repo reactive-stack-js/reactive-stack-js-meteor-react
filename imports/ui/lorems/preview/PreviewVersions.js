@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 import _ from "lodash";
 
 import PreviewVersionsRow from "./PreviewVersionsRow.js";
