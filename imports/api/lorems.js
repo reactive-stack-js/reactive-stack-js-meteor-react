@@ -34,53 +34,55 @@ if (Meteor.isServer) {
 			return instance;
 		},
 
-		async 'lorem.createDraft'(loremId, userId) {
-			// console.log('lorem.createDraft', loremId, userId);
+		async 'lorem.createDraft'(loremId) {
+			// console.log('lorem.createDraft', {loremId});
 			check(loremId, String);
-			check(userId, String);
+
+			const userId = Meteor.user()._id;
 
 			loremId = new Mongo.ObjectID(loremId);
 			let lorem = await Lorems.findOne({_id: loremId});
 
 			const sourceDocumentId = loremId;
 			const sourceDocumentItemId = lorem.itemId;
-			let existing = await Drafts.find({sourceDocumentId}).fetch();
-			console.log('lorem.createDraft 1 existing', existing);
-			if (!_.isEmpty(existing)) {
-				const draft = {collectionName: "lorems", sourceDocumentId, sourceDocumentItemId};
-				draft.document = _.omit(lorem, ['_id', 'updatedAt', 'updatedBy']);
-				draft.meta = {};
-				draft.createdBy = userId;
-				existing = await Draft.insert(draft);
-			}
-			console.log('lorem.createDraft 2 existing', existing);
-			return existing._id;
+
+			let existing = _.first(await Drafts.find({sourceDocumentItemId}).fetch());
+			if (existing) return existing._id._str;
+
+			const draft = {collectionName: "lorems", sourceDocumentId, sourceDocumentItemId};
+			draft.document = _.omit(lorem, ['_id', 'updatedAt', 'updatedBy']);
+			draft.meta = {};
+			draft.createdBy = userId;
+			draft._id = new Mongo.ObjectID();
+			const draftId = await Drafts.insert(draft);
+			return draftId._str;
 		},
 
-		async 'lorem.saveDraft'(draftId, userId) {
-			// console.log('lorem.saveDraft', id);
+		async 'lorem.saveDraft'(draftId) {
+			// console.log('lorem.saveDraft', draftId);
 			check(draftId, String);
+
+			const userId = Meteor.user()._id;
+
 			draftId = new Mongo.ObjectID(draftId);
 			let draft = await Drafts.findOne({_id: draftId});
 			if (_.isEmpty(draft)) console.log('QUE???');
 
 			const document = _.omit(draft.document, ['_id', 'createdAt']);
 
-			let max = await Lorems
-				.find({itemId: document.itemId})
-				.sort({iteration: -1})
-				.limit(1);
+			let max = await Lorems.find({itemId: draft.sourceDocumentItemId}, {sort: {iteration: -1}}).fetch();
 			max = _.first(max);
-			await Lorems.updateOne({_id: max._id}, {$set: {isLatest: false}});
+			await Lorems.update({_id: max._id}, {$set: {isLatest: false}});
 
 			document.isLatest = true;
 			document.iteration = max.iteration + 1;
 			document.createdBy = userId;
 			document.createdAt = new Date();
+			document._id = new Mongo.ObjectID();
 
-			await Drafts.deleteOne({_id: draftId});
-			const dbDocument = await Lorems.insert(document);
-			return dbDocument._id;
+			await Drafts.remove({_id: draftId});
+			const documentId = await Lorems.insert(document);
+			return documentId._str;
 		}
 
 	});

@@ -9,6 +9,7 @@ import jsonDiff from "json-diff";
 
 import './Lorem.css';
 import {Lorems} from '../../api/lorems.js';
+import {Drafts} from "../../api/drafts";
 
 let initialLoaded = false;
 let INITIAL;
@@ -52,7 +53,7 @@ class LoremComponent extends Component {
 		if (_.isEmpty(diff)) alert('No changes detected... still saving since out of POC scope.');
 
 		let draftId = this.props.draft._id._str;
-		Meteor.call('lorem.saveDraft', draftId, Meteor.user()._id, (error, result) => {
+		Meteor.call('lorem.saveDraft', draftId, (error, result) => {
 			if (error) console.error(error);
 			window.location.href = '/';
 		});
@@ -117,10 +118,7 @@ class LoremComponent extends Component {
 
 		if (!initialLoaded) {
 			initialLoaded = true;
-			Meteor.call('draft.instance', {
-				itemId: draft.itemId,
-				iteration: draft.iteration
-			}, (error, result) => {
+			Meteor.call('draft.instance', draft._id._str, (error, result) => {
 				if (error) console.error(error);
 				INITIAL = result;
 			});
@@ -135,22 +133,22 @@ class LoremComponent extends Component {
 							<tr>
 								<td width="60" className="editorRow"><label>Name:</label></td>
 								<td style={{whiteSpace: "nowrap"}}>
-									<input className="editorField" type="text" value={draft.firstname} disabled={this.isDisabled('firstname')} onFocus={() => this.onFocus('firstname')} onBlur={() => this.onBlur('firstname')} onChange={(e) => this.onChange(e.target.value, 'firstname')}/>
+									<input className="editorField" type="text" value={draft.document.firstname} disabled={this.isDisabled('firstname')} onFocus={() => this.onFocus('firstname')} onBlur={() => this.onBlur('firstname')} onChange={(e) => this.onChange(e.target.value, 'firstname')}/>
 									&nbsp;
-									<input className="editorField" type="text" value={draft.lastname} disabled={this.isDisabled('lastname')} onFocus={() => this.onFocus('lastname')} onBlur={() => this.onBlur('lastname')} onChange={(e) => this.onChange(e.target.value, 'lastname')}/>
+									<input className="editorField" type="text" value={draft.document.lastname} disabled={this.isDisabled('lastname')} onFocus={() => this.onFocus('lastname')} onBlur={() => this.onBlur('lastname')} onChange={(e) => this.onChange(e.target.value, 'lastname')}/>
 								</td>
 							</tr>
 							<tr>
 								<td className="editorRow"><label>E-mail:</label></td>
 								<td>
-									<input className="editorField" type="text" value={draft.email} disabled={this.isDisabled('email')} onFocus={() => this.onFocus('email')} onBlur={() => this.onBlur('email')} onChange={(e) => this.onChange(e.target.value, 'email')}/>
+									<input className="editorField" type="text" value={draft.document.email} disabled={this.isDisabled('email')} onFocus={() => this.onFocus('email')} onBlur={() => this.onBlur('email')} onChange={(e) => this.onChange(e.target.value, 'email')}/>
 								</td>
 							</tr>
 							<tr>
-								<td className="editorRow"><label>Species:</label>{draft.species}</td>
+								<td className="editorRow"><label>Species:</label>{draft.document.species}</td>
 								<td>
 									<select className="editorField"
-											value={draft.species}
+											value={draft.document.species}
 											disabled={this.isDisabled('species')}
 											onFocus={() => this.onFocus('species')}
 											onBlur={() => this.onBlur('species')}
@@ -162,7 +160,7 @@ class LoremComponent extends Component {
 							<tr>
 								<td className="editorRow"><label>Rating:</label></td>
 								<td>
-									<input className="editorField" type="number" value={draft.rating} disabled={this.isDisabled('rating')} onFocus={() => this.onFocus('rating')} onBlur={() => this.onBlur('rating')} onChange={(e) => this.onChange(e.target.value, 'rating')}/>
+									<input className="editorField" type="number" value={draft.document.rating} disabled={this.isDisabled('rating')} onFocus={() => this.onFocus('rating')} onBlur={() => this.onBlur('rating')} onChange={(e) => this.onChange(e.target.value, 'rating')}/>
 								</td>
 							</tr>
 							<tr>
@@ -172,7 +170,7 @@ class LoremComponent extends Component {
 										width: "413px",
 										height: "150px"
 									}}
-											  value={draft.description}
+											  value={draft.document.description}
 											  disabled={this.isDisabled('description')}
 											  onFocus={() => this.onFocus('description')}
 											  onBlur={() => this.onBlur('description')}
@@ -189,7 +187,7 @@ class LoremComponent extends Component {
 						Draft created on
 						<b>{moment(draft.createdAt).format('YYYY/MM/DD HH:mm:ss')}</b>
 						&nbsp;
-						using <b>version {draft.iteration}</b> of <b>{draft.username}</b>.
+						using <b>version {draft.document.iteration}</b> of <b>{draft.document.username}</b>.
 						{
 							updatedAt
 								? <span><br/>Last update at <b>{moment(updatedAt).format('YYYY/MM/DD HH:mm:ss')}</b>.</span>
@@ -213,13 +211,9 @@ export default withTracker((props) => {
 	let filter = {_id: new Mongo.ObjectID(id)};
 	const subscription = Meteor.subscribe('drafts', filter);
 
-	let draft = _.first(Lorems.find(filter).fetch());
-	let currentUser = Meteor.user();
-
 	return {
 		ready: subscription.ready(),
-		draft,
-		lorem: draft.document,
-		currentUser,
+		draft: _.first(Drafts.find(filter).fetch()),
+		currentUser: Meteor.user(),
 	};
 })(LoremComponent);

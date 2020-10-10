@@ -2,6 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {Mongo} from 'meteor/mongo';
 import {check} from 'meteor/check';
 import _ from "lodash";
+import {Lorems} from "./lorems";
 
 export const Drafts = new Mongo.Collection('drafts');
 
@@ -12,12 +13,22 @@ if (Meteor.isServer) {
 	});
 
 	Meteor.methods({
+
+		async 'draft.instance'(draftId) {
+			// console.log('lorem.instance', draftId);
+			check(draftId, String);
+			let draft = await Drafts.findOne({_id: draftId});
+			return draft;
+		},
+
 		async 'draft.focus'(params) {
 			// console.log('draft.focus', params);
 			check(params, Object);
 			let {draftId, field} = params;
 			check(draftId, String);
 			check(field, String);
+
+			const userId = Meteor.user()._id;
 
 			draftId = new Mongo.ObjectID(draftId);
 			const draft = await Drafts.findOne({_id: draftId});
@@ -32,7 +43,7 @@ if (Meteor.isServer) {
 				}
 			});
 			_.set(meta, field, {user: userId});
-			await Drafts.updateOne({_id: draftId}, {$set: {meta}});
+			await Drafts.update({_id: draftId}, {$set: {meta}});
 			return true;
 		},
 
@@ -42,6 +53,8 @@ if (Meteor.isServer) {
 			let {draftId, field} = params;
 			check(draftId, String);
 			check(field, String);
+
+			const userId = Meteor.user()._id;
 
 			draftId = new Mongo.ObjectID(draftId);
 			const draft = await Drafts.findOne({_id: draftId});
@@ -54,7 +67,7 @@ if (Meteor.isServer) {
 					const userId = _.get(curr, 'user');
 					if (userId !== userId) return false;
 					const metaData = _.omit(meta, field);
-					await Drafts.updateOne({_id: draftId}, {$set: {meta: metaData}});
+					await Drafts.update({_id: draftId}, {$set: {meta: metaData}});
 				}
 			}
 			return true;
@@ -67,6 +80,8 @@ if (Meteor.isServer) {
 			check(draftId, String);
 			check(field, String);
 
+			const userId = Meteor.user()._id;
+
 			draftId = new Mongo.ObjectID(draftId);
 			const draft = await Drafts.findOne({_id: draftId});
 			if (draft) {
@@ -77,13 +92,13 @@ if (Meteor.isServer) {
 					updatedAt: new Date(),
 					document
 				};
-				return Drafts.updateOne({_id: draftId}, {$set: updater});
+				return Drafts.update({_id: draftId}, {$set: updater});
 			}
 			return {draftId, change: {field, value}, userId, error: 'Drafts does not exist!'};
 		},
 
 		async 'draft.cancel'(draftId) {
-			// console.log('draft.cancel', id);
+			// console.log('draft.cancel', draftId);
 			check(draftId, String);
 			draftId = new Mongo.ObjectID(draftId);
 			Drafts.remove(draftId);
