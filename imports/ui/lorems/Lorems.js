@@ -148,7 +148,7 @@ class LoremsComponent extends Component {
 	}
 
 	async editLorem(lorem) {
-		Meteor.call('lorem.draft', lorem._id._str, (error, result) => {
+		Meteor.call('lorem.createDraft', lorem._id._str, Meteor.user()._id, (error, result) => {
 			if (error) return console.error(error);
 			window.location.href = '/lorem/' + result;
 		});
@@ -281,15 +281,6 @@ class LoremsComponent extends Component {
 
 export default withTracker((props) => {
 	Meteor.subscribe('lorems', filter.get());
-
-	console.log('query attributes', {
-		filter: filter.get(),
-		sort: sort.get(),
-		skip: skip.get(),
-		limit: size.get()
-	})
-
-	console.log('lorems', Lorems.find({}).fetch())
 
 	return {
 		lorems: Lorems.find(
