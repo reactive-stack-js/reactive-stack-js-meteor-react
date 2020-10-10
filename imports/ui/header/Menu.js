@@ -15,7 +15,7 @@ export default function Menu() {
 
 	return (
 		<div className="vertical-center">
-			<a href="/">Mahahaklice</a>
+			<a href="/">Lorems</a>
 		</div>
 	);
 }
