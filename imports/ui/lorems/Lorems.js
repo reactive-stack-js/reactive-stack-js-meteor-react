@@ -18,7 +18,7 @@ const MIN_PAGE_SIZE = 5;
 const MAX_PAGE_SIZE = 25;
 const COLUMNS = ['iteration', 'firstname', 'lastname', 'email', 'rating', 'description'];
 
-const filter = new ReactiveVar({isLatest: true, isDraft: null});
+const filter = new ReactiveVar({isLatest: true});
 const sort = new ReactiveVar({createdAt: -1});
 const skip = new ReactiveVar({skip: 0});
 const size = new ReactiveVar({size: 10});
@@ -281,6 +281,15 @@ class LoremsComponent extends Component {
 
 export default withTracker((props) => {
 	Meteor.subscribe('lorems', filter.get());
+
+	console.log('query attributes', {
+		filter: filter.get(),
+		sort: sort.get(),
+		skip: skip.get(),
+		limit: size.get()
+	})
+
+	console.log('lorems', Lorems.find({}).fetch())
 
 	return {
 		lorems: Lorems.find(
